@@ -108,7 +108,7 @@ DrawUFPB.io/
 
 ### 👨‍🔧 Equipe
 
-Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplicações de automação e robótica, durante a disciplina de Sistemas de Automação Industrial (Semestre 2024.2). Autores: Lucas Dantas e Gustavo Henrique.
+Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplicações de automação e robótica, durante a disciplina de Sistemas de Automação Industrial (Semestre 2024.2). Autores: Lucas Dantas, Gustavo Henrique e Matheus Navarro.
 
 ---
 
@@ -220,4 +220,4 @@ DrawUFPB.io/
 
 ### 👨‍🔧 Team
 
-Project developed at **Federal University of Paraíba (UFPB)** for automation and robotics applications, as part of the Industrial Automation Systems course (Semester 2024.2). Authors: Lucas Dantas and Gustavo Henrique.
+Project developed at **Federal University of Paraíba (UFPB)** for automation and robotics applications, as part of the Industrial Automation Systems course (Semester 2024.2). Authors: Lucas Dantas, Gustavo Henrique and Matheus Navarro.
