@@ -108,6 +108,17 @@ Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplica�
 
 **DrawUFPB.io** is a project that connects users via a **Telegram Bot** to a system that processes images and physically draws them using a **robotic arm controlled by a PLC (Programmable Logic Controller)**.
 
+
+<p float="left">
+  <img src="input.png" alt="Input" width="45%" />
+  <img src="background_removed.png" alt="Background Removed" width="45%" />
+</p>
+
+<p float="left">
+  <img src="contour.png" alt="Contour" width="45%" />
+  <img src="sketch.png" alt="Sketch" width="45%" />
+</p>
+
 ---
 
 ### 📁 Project Structure
