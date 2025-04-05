@@ -188,7 +188,7 @@ async def processImg(input_path: str):
         import matplotlib.pyplot as plt
         from mpl_toolkits.mplot3d import Axes3D
 
-        matrix = [item for item in matrix if item[2] != -129]
+        matrix = [item for item in matrix if item[2] != -109]
         xs = [point[0] for point in matrix]
         ys = [point[1] for point in matrix]
         zs = [point[2] for point in matrix]
