@@ -174,8 +174,8 @@ async def processImg(input_path: str):
         path = []
         for seq in sequences:
             if path:
-                path.append([path[-1][0], path[-1][1], path[-1][2]-10, -3,88,-2])  # Lift arm before moving
-                path.append([seq[0][0], seq[0][1], seq[0][2]-10, -3,88,-2])  # Move to new sequence start
+                path.append([path[-1][0], path[-1][1], path[-1][2]+10, -3,88,-2])  # Lift arm before moving
+                path.append([seq[0][0], seq[0][1], seq[0][2]+10, -3,88,-2])  # Move to new sequence start
             path.extend(seq)
 
         result = []
