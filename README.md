@@ -11,7 +11,7 @@
   <img src="contour.png" alt="Contour" width="30%" />
 </p>
 
-<p float="left">
+<p float="center">
   <img src="sketch.png" alt="Sketch" width="60%" />
 </p>
 
@@ -125,7 +125,7 @@ Projeto desenvolvido na **Universidade Federal da Para√≠ba (UFPB)** para aplica√
   <img src="contour.png" alt="Contour" width="30%" />
 </p>
 
-<p float="left">
+<p float="center">
   <img src="sketch.png" alt="Sketch" width="60%" />
 </p>
 
