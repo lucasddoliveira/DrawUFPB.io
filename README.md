@@ -5,6 +5,16 @@
 
 **DrawUFPB.io** é um projeto que conecta usuários via **Telegram Bot** a um sistema de **processamento de imagem** com controle de um **braço robótico**, utilizando um **PLC (Controlador Lógico Programável)**. A partir de uma imagem enviada, o sistema processa a imagem, remove o fundo, extrai os contornos e gera comandos para desenhá-la fisicamente com o braço robótico.
 
+<p float="left">
+  <img src="input.png" alt="Input" width="30%" />
+  <img src="background_removed.png" alt="Background Removed" width="30%" />
+  <img src="contour.png" alt="Contour" width="30%" />
+</p>
+
+<p float="left">
+  <img src="sketch.png" alt="Sketch" width="60%" />
+</p>
+
 ---
 
 ### 📁 Estrutura de Arquivos
@@ -110,13 +120,13 @@ Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplica�
 
 
 <p float="left">
-  <img src="input.png" alt="Input" width="45%" />
-  <img src="background_removed.png" alt="Background Removed" width="45%" />
+  <img src="input.png" alt="Input" width="30%" />
+  <img src="background_removed.png" alt="Background Removed" width="30%" />
+  <img src="contour.png" alt="Contour" width="30%" />
 </p>
 
 <p float="left">
-  <img src="contour.png" alt="Contour" width="45%" />
-  <img src="sketch.png" alt="Sketch" width="45%" />
+  <img src="sketch.png" alt="Sketch" width="60%" />
 </p>
 
 ---
