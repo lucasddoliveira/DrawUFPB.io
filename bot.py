@@ -32,16 +32,16 @@ async def ask_to_draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def receive_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.photo:
         photo_file = await update.message.photo[-1].get_file()
-        await photo_file.download_to_drive('input.png')
+        await photo_file.download_to_drive('steps/input.png')
         await update.message.reply_text("Image received. Processing...")
 
         global points
 
-        points = await processImg('input.png')
+        points = await processImg('steps/input.png')
 
         # Assuming 'contour.png' is generated after processing
-        if os.path.exists('contour.png'):
-            await update.message.reply_photo(photo=open('sketch.png', 'rb'))
+        if os.path.exists('steps/contour.png'):
+            await update.message.reply_photo(photo=open('steps/sketch.png', 'rb'))
             await update.message.reply_text(f"Do you want to draw this result? It will take {len(points)} movements. (yes/no)")
 
             return PROCESS_IMAGE

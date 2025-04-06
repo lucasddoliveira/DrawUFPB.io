@@ -14,8 +14,8 @@ async def processImg(input_path: str):
         input_path: str,
         
         # remove_background_ai parameters
-        bg_removed_path: str = "background_removed.png",
-        output_path: str = "contour.png",
+        bg_removed_path: str = "steps/background_removed.png",
+        output_path: str = "steps/contour.png",
         # process_image parameters
         process_cell_size: int = 1,
         
@@ -68,7 +68,7 @@ async def processImg(input_path: str):
         return Image.fromarray(data)
 
 
-    def remove_background_ai(input_path: str, output_path: str = "background_removed.png"):
+    def remove_background_ai(input_path: str, output_path: str = "steps/background_removed.png"):
         with open(input_path, "rb") as inp_file:
             img = Image.open(io.BytesIO(inp_file.read()))
             img_no_bg = remove(img)
@@ -114,7 +114,7 @@ async def processImg(input_path: str):
         # Overlay grid (optional, but uses cell_size=1)
         overlay = img.convert("RGB")
         
-        overlay.save("contour.png")
+        overlay.save("steps/contour.png")
         img_array = np.array(img)
         grid_rows = height // cell_size
         grid_cols = width // cell_size
@@ -209,14 +209,14 @@ async def processImg(input_path: str):
         ax.zaxis.set_ticklabels([])
         ax.zaxis.line.set_color((0, 0, 0, 0))
 
-        plt.savefig("sketch.png", bbox_inches='tight', dpi=600)
+        plt.savefig("steps/sketch.png", bbox_inches='tight', dpi=600)
         plt.close(fig)
 
 
     points = process_image_pipeline(
         input_path,
-        bg_removed_path="background_removed.png",
-        output_path="contour.png",
+        bg_removed_path="steps/background_removed.png",
+        output_path="steps/contour.png",
         process_cell_size=1,
         points_cellWidth=1,
         upperLeftEdge=[170, 65, -119, -3,88,-2],
