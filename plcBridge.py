@@ -37,9 +37,9 @@ class Conexao:
 
     def LER_POS(self):
         dadosbraco = self.sockobj.recv(16)
-        A = int.from_bytes(dadosbraco[1:4], byteorder="big", signed=True)
-        B = int.from_bytes(dadosbraco[4:7], byteorder="big", signed=True)
-        C = int.from_bytes(dadosbraco[7:10], byteorder="big", signed=True)
+        A = int.from_bytes(dadosbraco[1:4],   byteorder="big", signed=True)
+        B = int.from_bytes(dadosbraco[4:7],   byteorder="big", signed=True)
+        C = int.from_bytes(dadosbraco[7:10],  byteorder="big", signed=True)
         D = int.from_bytes(dadosbraco[10:12], byteorder="big", signed=True)
         E = int.from_bytes(dadosbraco[12:14], byteorder="big", signed=True)
         F = int.from_bytes(dadosbraco[14:16], byteorder="big", signed=True)
@@ -64,7 +64,7 @@ async def makeDraw(posicoes):
     clp = Conexao()
     clp.connect()
 
-    Ponto_inicial = [170, 65, -250, -3, 88, -2]
+    Ponto_inicial = [170, 65, -100, -3, 88, -2]
 
     mover_braco(clp, Ponto_inicial, msg="Indo para o ponto inicial")
 

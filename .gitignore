@@ -1,1 +1,16 @@
-.env
+# Virtual environments
+venv/
+.env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Testing/cache folders
+*.log
+.cache/
+.mypy_cache/
+.pytest_cache/
