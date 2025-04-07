@@ -1,4 +1,4 @@
-# DrawUFPB.io 🎨
+# DrawUFPB.io 🎨 (pt-BR)
 
 ## Sobre o Projeto 📖
 
@@ -55,7 +55,7 @@ O projeto é composto por três módulos principais:
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/lucasddoliveira/drawufpb.io.git
+git clone https://github.com/lucasddoliveira/DrawUFPB.io.git
 cd drawufpb.io
 ```
 
@@ -132,7 +132,6 @@ O módulo `plcBridge.py` gerencia a comunicação com o Controlador Lógico Prog
 - O CLP (Controlador Lógico Programável) empregado é da Siemens.
 - Este repositório contém apenas o servidor remoto da aplicação. Para que o sistema funcione completamente, é necessário também hospedar os arquivos responsáveis pela leitura e escrita das posições no controlador do braço robótico.
 - Em caso de dúvidas, entre em contato pelo e-mail: lucasddoliveira1@gmail.com
----
 
 ## Licença 📜
 
@@ -140,7 +139,7 @@ Este projeto está licenciado sob a licença MIT. Veja o arquivo `LICENSE` para 
 
 ---
 
-# DrawUFPB.io 🎨
+# DrawUFPB.io 🎨 (en-US)
 
 ## About the Project 📖
 
@@ -197,7 +196,7 @@ The project consists of three main modules:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/lucasddoliveira/drawufpb.io.git
+git clone https://github.com/lucasddoliveira/DrawUFPB.io.git
 cd drawufpb.io
 ```
 
@@ -275,7 +274,6 @@ The `plcBridge.py` module manages communication with the Programmable Logic Cont
 - This repository contains only the remote application server. For the system to function fully, it is also necessary to host the files responsible for reading and writing positions to the robotic arm controller.
 - If you have any questions, please contact: lucasddoliveira1@gmail.com
 
----
 
 ## License 📜
 
