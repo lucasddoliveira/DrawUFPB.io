@@ -1,9 +1,8 @@
+# DrawUFPB.io 🎨
 
-# 🇧🇷 README - DrawUFPB.io
+## Sobre o Projeto 📖
 
-### 🧠 Visão Geral
-
-**DrawUFPB.io** é um projeto que conecta usuários via **Telegram Bot** a um sistema de **processamento de imagem** com controle de um **braço robótico**, utilizando um **PLC (Controlador Lógico Programável)**. A partir de uma imagem enviada, o sistema processa a imagem, remove o fundo, extrai os contornos e gera comandos para desenhá-la fisicamente com o braço robótico.
+DrawUFPB.io é um sistema integrado que combina inteligência artificial, processamento de imagens e robótica para criar desenhos físicos usando um braço robótico. O projeto foi desenvolvido na **Universidade Federal da Paraíba (UFPB)**, para aplicações de automação e robótica, na disciplina de Sistemas de Automação Industrial (2024.2).
 
 <p float="left">
   <img src="steps/input.png" alt="Input" width="30%" />
@@ -15,88 +14,117 @@
   <img src="steps/sketch.png" alt="Sketch" width="60%" />
 </p>
 
----
+## Autores 👥
 
-### 📁 Estrutura de Arquivos
+- Lucas Dantas
+- Gustavo Henrique
+- Matheus Navarro
 
-```
-DrawUFPB.io/
-├── bot.py                # Bot do Telegram para receber imagens e interagir com o usuário
-├── image_processor.py    # Processamento da imagem: remove fundo, detecta contornos, gera coordenadas
-├── plcBridge.py          # Comunicação com o CLP para controlar o braço robótico
-```
+## Funcionalidades 🔍
 
----
+- 💬 Chatbot com IA para interação com usuários
+- 🖼️ Geração de imagens a partir de descrições textuais usando IA
+- 📸 Processamento de fotos enviadas pelos usuários
+- 🤖 Execução de desenhos usando um braço robótico
+- 🔄 Interface via Telegram para fácil acesso e usabilidade
 
-### 🤖 Funcionamento do Bot
+## Arquitetura do Sistema 🏗️
 
-1. O usuário inicia a conversa com `/start`.
-2. O bot pergunta se o usuário quer desenhar algo.
-3. Se o usuário responder "yes", o bot solicita uma imagem.
-4. A imagem é processada:
-   - Remove o fundo.
-   - Detecta os contornos.
-   - Gera um vetor de pontos (trajetória).
-   - Envia uma imagem com visualização 3D como prévia.
-5. O usuário confirma se deseja que o braço desenhe.
-6. Se sim, os comandos são enviados ao CLP que move o braço robótico conforme os pontos gerados.
+O projeto é composto por três módulos principais:
 
----
+1. **chatbotAI.py**: Interface do usuário via Telegram, gerenciamento de comandos e integração com modelos de IA
+2. **image_processor.py**: Algoritmos de processamento de imagem para converter imagens em coordenadas de desenho
+3. **plcBridge.py**: Comunicação com o CLP (Controlador Lógico Programável) para controlar o braço robótico
 
-### 🧩 Componentes
-
-#### `bot.py`
-- Utiliza a biblioteca `python-telegram-bot`.
-- Controla o fluxo de conversação e comandos.
-- Interage com os módulos de processamento de imagem e o PLC.
-
-#### `image_processor.py`
-- Usa `rembg` para remover o fundo da imagem.
-- Aplica detecção de bordas com Canny.
-- Gera uma matriz binária e converte em coordenadas 3D.
-- Cria uma visualização em 3D da trajetória com `matplotlib`.
-
-#### `plcBridge.py`
-- Usa `socket` para conectar ao PLC.
-- Converte coordenadas em bytes e envia para o CLP.
-- Lê posições em tempo real do braço.
-- Move o braço para desenhar com precisão.
-
----
-
-### ⚙️ Pré-requisitos
+## Requisitos 📋
 
 - Python 3.8+
-- Instalar dependências:
-  ```bash
-  pip install python-telegram-bot rembg opencv-python numpy matplotlib pillow python-dotenv
-  ```
+- Bibliotecas:
+  - python-telegram-bot
+  - groq
+  - rembg
+  - numpy
+  - opencv-cv2
+  - matplotlib
+  - PIL
+  - huggingface_hub
+  - requests
+  - python-dotenv
 
----
+## Configuração ⚙️
 
-### 🚀 Como executar
+1. Clone o repositório:
+```bash
+git clone https://github.com/lucasddoliveira/drawufpb.io.git
+cd drawufpb.io
+```
 
-1. Altere o **token do Telegram** em `bot.py` pela sua chave:
-   ```python
-   application = Application.builder().token("TOKEN_TELEGRAM").build()
-   ```
+2. Instale as dependências:
+```bash
+pip install -r requirements.txt
+```
 
-2. Altere o **IP do CLP** em `plcBridge.py` pela IP do seu CLP (ex: 150.165.164.834):
-   ```python
-   application = Application.builder().token("CLP_IP").build()
-   ```
+3. Crie e configure o arquivo `.env` com as seguintes variáveis:
+```
+TOKEN_TELEGRAM=seu_token_do_telegram
+GROQ_API_KEY=sua_chave_api_groq
+HUGGINGFACE_API_KEY=sua_chave_api_huggingface
+CLP_IP=endereco_ip_do_clp
+```
 
-3. Execute o bot:
-   ```bash
-   python bot.py
-   ```
+## Como Usar 🚀
 
-4. No Telegram, inicie a conversa com o bot e envie uma imagem!
+1. Inicie o bot do Telegram:
+```bash
+python chatbotAI.py
+```
 
+2. Interaja com o bot usando os seguintes comandos:
+   - `/start` - Inicia ou reinicia a conversa
+   - `/image` - Gera uma imagem a partir de uma descrição
+   - `/upload` - Carrega sua própria foto para desenho
+   - `/help` - Mostra a mensagem de ajuda
+   - `/clear` - Limpa o histórico de conversa
+   - `/cancel` - Cancela a operação atual
 
----
+## Fluxo de Funcionamento 🔄
 
-### 📌 Observações
+1. O usuário interage com o bot via Telegram
+2. Para gerar imagens:
+   - O usuário envia o comando `/image` seguido de uma descrição
+   - A IA gera uma imagem usando o modelo FLUX.1-dev da Hugging Face
+   - A imagem é processada para detectar contornos
+   - O sistema converte os contornos em coordenadas para o braço robótico
+   - O usuário confirma se deseja desenhar a imagem fisicamente
+
+3. Para processar fotos:
+   - O usuário envia o comando `/upload` e carrega uma foto
+   - O sistema processa a foto, remove o fundo e detecta contornos
+   - O sistema converte os contornos em coordenadas para o braço robótico
+   - O usuário confirma se deseja desenhar a imagem fisicamente
+
+## Detalhes Técnicos 🔧
+
+### Processamento de Imagem
+
+O módulo `image_processor.py` realiza várias etapas para transformar uma imagem em coordenadas de desenho:
+
+1. Remoção de fundo usando IA (rembg)
+2. Detecção de contornos usando algoritmos de visão computacional (OpenCV)
+3. Conversão de contornos em uma matriz de pontos
+4. Geração de sequências de pontos otimizadas para o movimento do braço robótico
+5. Visualização 3D para preview do resultado
+
+### Comunicação com o CLP
+
+O módulo `plcBridge.py` gerencia a comunicação com o Controlador Lógico Programável através de socket TCP/IP:
+
+1. Estabelece conexão com o CLP usando o IP configurado
+2. Envia comandos para mover o braço robótico para posições específicas
+3. Recebe feedback sobre a posição atual do braço
+4. Gerencia a sequência de movimentos para executar o desenho
+
+## 📌 Observações
 
 - Os limites de desenho são definidos pelas bordas `[170, 65, -119]` e `[601, 403, -119]`.
 - O braço levanta entre sequências para evitar colisões.
@@ -106,18 +134,17 @@ DrawUFPB.io/
 - Em caso de dúvidas, entre em contato pelo e-mail: lucasddoliveira1@gmail.com
 ---
 
-### 👨‍🔧 Equipe
+## Licença 📜
 
-Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplicações de automação e robótica, durante a disciplina de Sistemas de Automação Industrial (Semestre 2024.2). Autores: Lucas Dantas, Gustavo Henrique e Matheus Navarro.
+Este projeto está licenciado sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
 
-# 🇺🇸 README - DrawUFPB.io
+# DrawUFPB.io 🎨
 
-### 🧠 Overview
+## About the Project 📖
 
-**DrawUFPB.io** is a project that connects users via a **Telegram Bot** to a system that processes images and physically draws them using a **robotic arm controlled by a PLC (Programmable Logic Controller)**.
-
+DrawUFPB.io is an integrated system that combines artificial intelligence, image processing, and robotics to create physical drawings using a robotic arm. The project was developed at the **Federal University of Paraíba (UFPB)** for automation and robotics applications, as part of the Industrial Automation Systems course (2024.2).
 
 <p float="left">
   <img src="steps/input.png" alt="Input" width="30%" />
@@ -129,85 +156,117 @@ Projeto desenvolvido na **Universidade Federal da Paraíba (UFPB)** para aplica�
   <img src="steps/sketch.png" alt="Sketch" width="60%" />
 </p>
 
----
+## Authors 👥
 
-### 📁 Project Structure
+- Lucas Dantas
+- Gustavo Henrique
+- Matheus Navarro
 
-```
-DrawUFPB.io/
-├── bot.py                # Telegram bot to receive images and interact with users
-├── image_processor.py    # Image processing: background removal, edge detection, coordinate generation
-├── plcBridge.py          # Communication with the PLC to control the robotic arm
-```
+## Features 🔍
 
----
+- 💬 AI chatbot for user interaction
+- 🖼️ AI image generation from text descriptions
+- 📸 Processing of user-uploaded photos
+- 🤖 Drawing execution using a robotic arm
+- 🔄 Telegram interface for easy access and usability
 
-### 🤖 Bot Flow
+## System Architecture 🏗️
 
-1. User starts with `/start`.
-2. Bot asks: "Do you want to draw something?"
-3. If the user says "yes", the bot asks for an image.
-4. The image is processed:
-   - Background is removed.
-   - Contours are detected.
-   - A point sequence is generated (drawing path).
-   - A 3D preview is returned.
-5. User confirms if the result should be drawn.
-6. If confirmed, the PLC receives instructions and the robot arm executes the drawing.
+The project consists of three main modules:
 
----
+1. **chatbotAI.py**: User interface via Telegram, command management, and AI model integration
+2. **image_processor.py**: Image processing algorithms to convert images into drawing coordinates
+3. **plcBridge.py**: Communication with the PLC (Programmable Logic Controller) to control the robotic arm
 
-### 🧩 Components
-
-#### `bot.py`
-- Uses `python-telegram-bot` to handle user interaction.
-- Coordinates image processing and robot execution.
-
-#### `image_processor.py`
-- Uses `rembg` for background removal.
-- Applies Canny edge detection.
-- Generates 3D coordinates and 3D path preview using `matplotlib`.
-
-#### `plcBridge.py`
-- Uses `socket` to communicate with a PLC.
-- Sends encoded drawing coordinates.
-- Reads real-time arm position.
-- Commands the arm to draw point by point.
-
----
-
-### ⚙️ Requirements
+## Requirements 📋
 
 - Python 3.8+
-- Install dependencies:
-  ```bash
-  pip install python-telegram-bot rembg opencv-python numpy matplotlib pillow python-dotenv
-  ```
+- Libraries:
+  - python-telegram-bot
+  - groq
+  - rembg
+  - numpy
+  - opencv-cv2
+  - matplotlib
+  - PIL
+  - huggingface_hub
+  - requests
+  - python-dotenv
 
----
+## Setup ⚙️
 
-### 🚀 How to Run
+1. Clone the repository:
+```bash
+git clone https://github.com/lucasddoliveira/drawufpb.io.git
+cd drawufpb.io
+```
 
-1. Replace the **Telegram token** in `bot.py` with your own key:
-   ```python
-   application = Application.builder().token("TELEGRAM_TOKEN").build()
-   ```
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-2. Replace the **PLC IP address** in `plcBridge.py` with the IP of your PLC (e.g., 150.165.164.834):
-   ```python
-   application = Application.builder().token("CLP_IP").build()
-   ```
+3. Create and configure the `.env` file with the following variables:
+```
+TOKEN_TELEGRAM=your_telegram_token
+GROQ_API_KEY=your_groq_api_key
+HUGGINGFACE_API_KEY=your_huggingface_api_key
+CLP_IP=plc_ip_address
+```
 
-3. Start the bot:
-   ```bash
-   python bot.py
-   ```
+## How to Use 🚀
 
-4. Open Telegram and send a message to your bot!
+1. Start the Telegram bot:
+```bash
+python chatbotAI.py
+```
 
----
+2. Interact with the bot using the following commands:
+   - `/start` - Start or restart the conversation
+   - `/image` - Generate an image from a description
+   - `/upload` - Upload your own photo for drawing
+   - `/help` - Show the help message
+   - `/clear` - Clear the conversation history
+   - `/cancel` - Cancel the current operation
 
-### 📌 Notes
+## Operation Flow 🔄
+
+1. The user interacts with the bot via Telegram
+2. For image generation:
+   - The user sends the `/image` command followed by a description
+   - AI generates an image using Hugging Face's FLUX.1-dev model
+   - The image is processed to detect contours
+   - The system converts the contours into coordinates for the robotic arm
+   - The user confirms whether they want to physically draw the image
+
+3. For photo processing:
+   - The user sends the `/upload` command and uploads a photo
+   - The system processes the photo, removes the background, and detects contours
+   - The system converts the contours into coordinates for the robotic arm
+   - The user confirms whether they want to physically draw the image
+
+## Technical Details 🔧
+
+### Image Processing
+
+The `image_processor.py` module performs several steps to transform an image into drawing coordinates:
+
+1. Background removal using AI (rembg)
+2. Contour detection using computer vision algorithms (OpenCV)
+3. Conversion of contours into a point matrix
+4. Generation of optimized point sequences for robotic arm movement
+5. 3D visualization for result preview
+
+### PLC Communication
+
+The `plcBridge.py` module manages communication with the Programmable Logic Controller through TCP/IP socket:
+
+1. Establishes connection with the PLC using the configured IP
+2. Sends commands to move the robotic arm to specific positions
+3. Receives feedback on the current position of the arm
+4. Manages the sequence of movements to execute the drawing
+
+## 📌 Notes
 
 - Drawing area is defined between `[170, 65, -119]` and `[601, 403, -119]`.
 - The robotic arm lifts between strokes to avoid dragging.
@@ -218,6 +277,6 @@ DrawUFPB.io/
 
 ---
 
-### 👨‍🔧 Team
+## License 📜
 
-Project developed at **Federal University of Paraíba (UFPB)** for automation and robotics applications, as part of the Industrial Automation Systems course (Semester 2024.2). Authors: Lucas Dantas, Gustavo Henrique and Matheus Navarro.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
