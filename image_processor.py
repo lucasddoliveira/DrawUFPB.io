@@ -92,7 +92,7 @@ async def processImg(input_path: str):
         blurred = cv2.GaussianBlur(image, (3, 3), 0)
         
         # Use Canny edge detection
-        edges = cv2.Canny(blurred, 190, 191)
+        edges = cv2.Canny(blurred, 120, 191)
         
         # Find contours
         contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
