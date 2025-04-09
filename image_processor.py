@@ -128,7 +128,7 @@ async def processImg(input_path: str):
         step_x = total_width / width
         step_y = total_height / height
         
-        # Prepare to collect points
+        # Prepare to collect points.
         points = []
         visited = set()
         
