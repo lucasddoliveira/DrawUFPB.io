@@ -103,7 +103,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.chat.send_action(action="typing")
     
     try:
-        # Get AI response from Groq
+        # Geet AI response from Groq
         response = groq_client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=user_conversations[user_id],
