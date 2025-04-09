@@ -133,13 +133,8 @@ async def processImg(input_path: str):
         visited = set()
         
         def get_neighbors(i, j):
-            # All 8 possible directions (up, down, left, right, and diagonals)
-            directions = [
-                (-1, 0), (1, 0),  # up, down
-                (0, -1), (0, 1),  # left, right
-                (-1, -1), (-1, 1),  # top-left, top-right
-                (1, -1), (1, 1)     # bottom-left, bottom-right
-            ]
+            # Only consider direct neighbors (up, down, left, right)
+            directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
             return [(i+di, j+dj) for di, dj in directions if 0 <= i+di < height and 0 <= j+dj < width]
         
         def trace_sequence(i, j):

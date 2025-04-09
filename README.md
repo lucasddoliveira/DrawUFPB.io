@@ -11,8 +11,8 @@ DrawUFPB.io é um sistema integrado que combina inteligência artificial, proces
 </p>
 
 <p float="left">
-  <img src="steps/3d_path.png" alt="Input" width="50%" />
-  <img src="steps/sketch.png" alt="Top view sketch" width="50%" /> 
+  <img src="steps/3d_path.png" alt="Input" width="40%" />
+  <img src="steps/sketch.png" alt="Top view sketch" width="40%" /> 
 </p>
 
 ## Autores 👥
@@ -153,8 +153,8 @@ DrawUFPB.io is an integrated system that combines artificial intelligence, image
 </p>
 
 <p float="left">
-  <img src="steps/3d_path.png" alt="Input" width="50%" />
-  <img src="steps/sketch.png" alt="Top view sketch" width="50%" /> 
+  <img src="steps/3d_path.png" alt="Input" width="40%" />
+  <img src="steps/sketch.png" alt="Top view sketch" width="40%" /> 
 </p>
 
 
