@@ -170,6 +170,7 @@ async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             # Send processed image preview
             if os.path.exists('steps/sketch.png'):
+                await update.message.reply_photo(photo=open('steps/contour.png', 'rb'))
                 await update.message.reply_photo(photo=open('steps/sketch.png', 'rb'))
                 await update.message.reply_text(
                     f"Here's your generated image and how it would look when drawn! "
@@ -242,6 +243,7 @@ async def process_uploaded_photo(update: Update, context: ContextTypes.DEFAULT_T
         
         # Send processed image preview
         if os.path.exists('steps/sketch.png'):
+            await update.message.reply_photo(photo=open('steps/contour.png', 'rb'))
             await update.message.reply_photo(photo=open('steps/sketch.png', 'rb'))
             await update.message.reply_text(
                 f"Here's how your photo would look when drawn! "
