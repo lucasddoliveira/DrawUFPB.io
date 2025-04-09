@@ -23,7 +23,7 @@ DrawUFPB.io é um sistema integrado que combina inteligência artificial, proces
 
 ## Funcionalidades 🔍
 
-- 💬 Chatbot com IA para interação com usuários
+- 💬 Chatbot com IA para interagir com usuários
 - 🖼️ Geração de imagens a partir de descrições textuais usando IA
 - 📸 Processamento de fotos enviadas pelos usuários
 - 🤖 Execução de desenhos usando um braço robótico
