@@ -1,11 +1,11 @@
 import os
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler, CallbackQueryHandler
 from dotenv import load_dotenv
 import requests
 from groq import Groq
 from io import BytesIO
-from image_processor import processImg  # Import from bot.py
+from AmericoDraws import independencia_ou_morte
 from plcBridge import makeDraw  # Import from bot.py
 from huggingface_hub import InferenceClient
 
@@ -20,7 +20,7 @@ HUGGINGFACE_API_KEY= os.getenv('HUGGINGFACE_API_KEY')
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Define conversation states
-CHATTING, GENERATING_IMAGE, DRAWING_CONFIRM, UPLOAD_PHOTO = range(4)
+CHATTING, GENERATING_IMAGE, DRAWING_CONFIRM, UPLOAD_PHOTO, EDITING_PARAMS, WAITING_PARAM_VALUE = range(6)
 
 # Store conversation history for each user
 user_conversations = {}
@@ -28,14 +28,52 @@ user_conversations = {}
 points = []
 # Store generated image path for current session
 current_image_path = None
+# Store user-specific parameters
+user_params = {}
+
+# Default parameters for drawing
+DEFAULT_PARAMS = {
+    'process_cell_size': 1,
+    'points_cell_width': 1,
+    'z_up': -10,
+    'remove_background': False,  # New parameter
+    'bg_threshold': 10,
+    'bg_erode_pixels': 1,
+    'threshold1': 50,
+    'threshold2': 191,
+    'blur_size': 3,
+    'distance_threshold': 3,
+    'epsilon': 1,
+    'linewidth': 5
+}
+
+# Add to EDITABLE_PARAMS list
+EDITABLE_PARAMS = [
+    ('process_cell_size', 'Resolution of image processing (lower = higher detail)'),
+    ('points_cell_width', 'Width of each cell in points'),
+    ('z_up', 'Height the pen moves up between strokes'),
+    ('remove_background', 'Remove image background (1=yes, 0=no)'),  # New parameter
+    ('bg_threshold', 'Background removal threshold'),
+    ('bg_erode_pixels', 'Background erosion strength'),
+    ('threshold1', 'Edge detection lower threshold'),
+    ('threshold2', 'Edge detection upper threshold'),
+    ('blur_size', 'Blur size for edge detection'),
+    ('distance_threshold', 'Min distance between points'),
+    ('epsilon', 'Simplification factor for lines'),
+    ('linewidth', 'Width of drawn lines')
+]
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start the conversation and initialize user context."""
     user_id = update.effective_user.id
     user_conversations[user_id] = [{
             "role": "system",
-            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. Let's make something amazing together! 🤖🖋️"""
+            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. /params - View and edit drawing parameters. Let's make something amazing together! 🤖🖋️"""
         }]
+    
+    # Initialize user parameters
+    if user_id not in user_params:
+        user_params[user_id] = DEFAULT_PARAMS.copy()
  
     welcome_message = (
         "👋 Hello! I'm an AI assistant that can help you make drawings with the robotic arm!\n\n"
@@ -43,11 +81,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• Chat with you using Groq's LLM\n"
         "• Generate images based on your descriptions\n"
         "• Process your uploaded photos\n"
-        "• Draw images using a robotic arm\n\n"
+        "• Draw images using a robotic arm\n"
+        "• Let you customize drawing parameters\n\n"
         "Commands:\n"
         "/start - Start/restart the conversation\n"
         "/image - Generate an image\n"
         "/upload - Upload your own photo\n"
+        "/params - View and edit drawing parameters\n"
         "/help - Show this help message\n"
         "/clear - Clear your conversation history\n"
         "/cancel - Cancel current operation"
@@ -63,11 +103,12 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/start - Start/restart the conversation\n"
         "/image - Generate an image\n"
         "/upload - Upload your own photo\n"
+        "/params - View and edit drawing parameters\n"
         "/help - Show this help message\n"
         "/clear - Clear your conversation history\n"
         "/cancel - Cancel current operation\n\n"
         "Just send a message to chat with me, use /image to generate an image, "
-        "or use /upload to draw your own photos with the robotic arm."
+        "use /upload to draw your own photos, or /params to customize the drawing process."
     )
     
     await update.message.reply_text(help_message)
@@ -78,7 +119,7 @@ async def clear_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_conversations[user_id] = [{
             "role": "system",
-            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. Let's make something amazing together! 🤖🖋️"""
+            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. /params - View and edit drawing parameters. Let's make something amazing together! 🤖🖋️"""
         }]
     
     await update.message.reply_text("Conversation history cleared! Let's start fresh.")
@@ -93,7 +134,7 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user_id not in user_conversations:
         user_conversations[user_id] = [{
             "role": "system",
-            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. Let's make something amazing together! 🤖🖋️"""
+            "content": """You are a friendly and knowledgeable assistant designed to help users create drawings using a robotic arm. Your mission is to guide them step-by-step—from generating creative images to transforming them into real-world sketches using the robot. 🎨 How to Interact with Me: Just send a message to start a conversation. Want to turn your imagination into art? Use the /image command followed by a description. Example: /image a cat wearing sunglasses. After generating your image, I'll ask if you'd like to draw it with the robotic arm. 📚 Available Commands: /start – Start or restart the conversation. /image – Generate an image from a description. /help – Show this help message. /clear – Clear the conversation history. /cancel – Cancel the current operation. /upload - Upload your own photo for drawing. /params - View and edit drawing parameters. Let's make something amazing together! 🤖🖋️"""
         }]
     
     # Add user message to history
@@ -130,13 +171,17 @@ async def image_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Please describe the image you want me to generate:")
     return GENERATING_IMAGE
 
-
 async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Generate an image based on user prompt using Hugging Face FLUX.1-dev model."""
     global current_image_path
     global points
-
+    
+    user_id = update.effective_user.id
     prompt = update.message.text
+    
+    # Make sure user parameters are initialized
+    if user_id not in user_params:
+        user_params[user_id] = DEFAULT_PARAMS.copy()
 
     await update.message.reply_text(f"Generating image for: '{prompt}'... This might take a moment.")
     await update.message.chat.send_action(action="upload_photo")
@@ -165,13 +210,38 @@ async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Send the image
             await update.message.reply_photo(photo=open(current_image_path, 'rb'))
             await update.message.reply_text(f"Processing this result...This is usually fast.")
-            # Process image for drawing
-            points = await processImg(current_image_path)
+            
+            # Get user-specific parameters
+            params = user_params[user_id]
+            
+            # Process image for drawing with user parameters
+            points = independencia_ou_morte(
+                input_path=current_image_path,
+                output_dir="steps",
+                process_cell_size=params['process_cell_size'],
+                points_cell_width=params['points_cell_width'],
+                upper_left_edge=[170, 65, -118, -3, 88, -2],
+                bottom_right_edge=[601, 403, -118, -3, 88, -2],
+                z_up=params['z_up'],
+                remove_background=params['remove_background'],  # Use the parameter value
+                # Background removal parameters
+                bg_threshold=params['bg_threshold'],
+                bg_erode_pixels=params['bg_erode_pixels'],
+                # Contour extraction parameters
+                threshold1=params['threshold1'],
+                threshold2=params['threshold2'],
+                blur_size=params['blur_size'],
+                # Path optimization parameters
+                distance_threshold=params['distance_threshold'],
+                epsilon=params['epsilon'],
+                linewidth=params['linewidth']
+            )
 
             # Send processed image preview
-            if os.path.exists('steps/sketch.png'):
+            if os.path.exists('steps/final_result.png'):
                 await update.message.reply_photo(photo=open('steps/contour.png', 'rb'))
-                await update.message.reply_photo(photo=open('steps/sketch.png', 'rb'))
+                await update.message.reply_photo(photo=open('steps/3d_path.png', 'rb'))
+                await update.message.reply_photo(photo=open('steps/final_result.png', 'rb'))
                 await update.message.reply_text(
                     f"Here's your generated image and how it would look when drawn! "
                     f"Would you like to draw this with the robotic arm? It will take {len(points)} movements. (yes/no)"
@@ -200,7 +270,6 @@ async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Sorry, I encountered an error generating the image: {str(e)}")
         return CHATTING
     
-
 async def upload_photo_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start photo upload process."""
     await update.message.reply_text(
@@ -213,6 +282,8 @@ async def process_uploaded_photo(update: Update, context: ContextTypes.DEFAULT_T
     """Process a photo uploaded by the user."""
     global current_image_path
     global points
+    
+    user_id = update.effective_user.id
     
     # Ensure the message contains a photo
     if not update.message.photo:
@@ -238,13 +309,37 @@ async def process_uploaded_photo(update: Update, context: ContextTypes.DEFAULT_T
         # Download the file
         await file.download_to_drive(current_image_path)
         
-        # Process image for drawing
-        points = await processImg(current_image_path)
+        # Get user-specific parameters
+        params = user_params[user_id]
+        
+        # Process image for drawing with user parameters
+        points = independencia_ou_morte(
+            input_path=current_image_path,
+            output_dir="steps",
+            process_cell_size=params['process_cell_size'],
+            points_cell_width=params['points_cell_width'],
+            upper_left_edge=[170, 65, -118, -3, 88, -2],
+            bottom_right_edge=[601, 403, -118, -3, 88, -2],
+            z_up=params['z_up'],
+            remove_background=params['remove_background'],  # Use the parameter value
+            # Background removal parameters
+            bg_threshold=params['bg_threshold'],
+            bg_erode_pixels=params['bg_erode_pixels'],
+            # Contour extraction parameters
+            threshold1=params['threshold1'],
+            threshold2=params['threshold2'],
+            blur_size=params['blur_size'],
+            # Path optimization parameters
+            distance_threshold=params['distance_threshold'],
+            epsilon=params['epsilon'],
+            linewidth=params['linewidth']
+        )
         
         # Send processed image preview
-        if os.path.exists('steps/sketch.png'):
+        if os.path.exists('steps/final_result.png'):
             await update.message.reply_photo(photo=open('steps/contour.png', 'rb'))
-            await update.message.reply_photo(photo=open('steps/sketch.png', 'rb'))
+            await update.message.reply_photo(photo=open('steps/3d_path.png', 'rb'))
+            await update.message.reply_photo(photo=open('steps/final_result.png', 'rb'))
             await update.message.reply_text(
                 f"Here's how your photo would look when drawn! "
                 f"Would you like to draw this with the robotic arm? It will take {len(points)} movements. (yes/no)"
@@ -286,6 +381,117 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Current operation cancelled. What would you like to do?")
     return CHATTING
 
+# New functions for parameter editing
+
+async def params_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Display current parameters and allow editing."""
+    user_id = update.effective_user.id
+    
+    # Initialize parameters if not existing
+    if user_id not in user_params:
+        user_params[user_id] = DEFAULT_PARAMS.copy()
+    
+    # Create keyboard with parameter options
+    keyboard = []
+    for param_name, param_desc in EDITABLE_PARAMS:
+        current_value = user_params[user_id][param_name]
+        keyboard.append([InlineKeyboardButton(
+            f"{param_name}: {current_value} - {param_desc}", 
+            callback_data=f"edit_{param_name}"
+        )])
+    
+    # Add reset option
+    keyboard.append([InlineKeyboardButton("Reset to Default Values", callback_data="reset_params")])
+    
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await update.message.reply_text(
+        "🔧 Drawing Parameters\n\n"
+        "These parameters control how the image is processed and drawn. "
+        "Click on a parameter to edit its value:",
+        reply_markup=reply_markup
+    )
+    
+    return EDITING_PARAMS
+
+async def param_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle button clicks for parameter editing."""
+    query = update.callback_query
+    await query.answer()
+    
+    user_id = query.from_user.id
+    data = query.data
+    
+    if data == "reset_params":
+        # Reset to default values
+        user_params[user_id] = DEFAULT_PARAMS.copy()
+        
+        await query.edit_message_text(
+            "Parameters reset to default values. Use /params to view them."
+        )
+        return CHATTING
+    
+    elif data.startswith("edit_"):
+        # Extract parameter name
+        param_name = data.split("_")[1]
+        
+        # Find parameter description
+        param_desc = next((desc for name, desc in EDITABLE_PARAMS if name == param_name), "")
+        current_value = user_params[user_id][param_name]
+        
+        await query.edit_message_text(
+            f"Editing parameter: {param_name}\n"
+            f"Description: {param_desc}\n"
+            f"Current value: {current_value}\n\n"
+            f"Please enter the new integer value:"
+        )
+        
+        # Store the parameter name being edited
+        context.user_data['editing_param'] = param_name
+        
+        return WAITING_PARAM_VALUE
+    
+    return EDITING_PARAMS
+
+async def save_param_value(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Save the new value for the parameter."""
+    user_id = update.effective_user.id
+    text = update.message.text
+    
+    param_name = context.user_data.get('editing_param')
+    
+    if not param_name:
+        await update.message.reply_text("Error: No parameter selected. Please use /params to start again.")
+        return CHATTING
+    
+    try:
+        # Convert to integer
+        new_value = int(text)
+        
+        # Special handling for remove_background parameter
+        if param_name == 'remove_background':
+            if new_value not in [0, 1]:
+                await update.message.reply_text("❌ For remove_background, please enter 1 (yes) or 0 (no).")
+                return WAITING_PARAM_VALUE
+            new_value = bool(new_value)  # Convert to boolean
+        
+        # Update the parameter
+        user_params[user_id][param_name] = new_value
+        
+        await update.message.reply_text(
+            f"✅ Parameter '{param_name}' updated to {new_value}.\n\n"
+            f"Use /params to view or edit other parameters."
+        )
+        
+    except ValueError:
+        await update.message.reply_text(
+            "❌ Invalid input. Please enter an integer value.\n"
+            "Use /cancel to stop editing parameters."
+        )
+        return WAITING_PARAM_VALUE
+    
+    return CHATTING
+
 def main():
     """Run the bot."""
     # Create the Application
@@ -299,19 +505,31 @@ def main():
                 CommandHandler("help", help_command),
                 CommandHandler("image", image_command),
                 CommandHandler("upload", upload_photo_command),
+                CommandHandler("params", params_command),  # New command for parameters
                 CommandHandler("clear", clear_history),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, chat),
             ],
             GENERATING_IMAGE: [
+                CommandHandler("cancel", cancel),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, generate_image),
             ],
             UPLOAD_PHOTO: [
+                CommandHandler("cancel", cancel),
                 MessageHandler(filters.PHOTO, process_uploaded_photo),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, lambda update, context: 
                     update.message.reply_text("Please upload a photo or use /cancel to go back.")),
             ],
             DRAWING_CONFIRM: [
+                CommandHandler("cancel", cancel),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, draw_confirm),
+            ],
+            EDITING_PARAMS: [
+                CommandHandler("cancel", cancel),
+                CallbackQueryHandler(param_button),
+            ],
+            WAITING_PARAM_VALUE: [
+                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, save_param_value),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],

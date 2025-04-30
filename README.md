@@ -1,63 +1,66 @@
-# DrawUFPB.io 🎨 (pt-BR)
+# DrawUFPB.io 🎨
 
-## Sobre o Projeto 📖
+Um bot de Telegram para criação e desenho de imagens utilizando um braço robótico, baseado na biblioteca AmericoDraws.
 
-DrawUFPB.io é um sistema integrado que combina inteligência artificial, processamento de imagens e robótica para criar desenhos físicos usando um braço robótico. O projeto foi desenvolvido na **Universidade Federal da Paraíba (UFPB)**, para aplicações de automação e robótica, na disciplina de Sistemas de Automação Industrial (2024.2).
+## 🇧🇷 Português
+
+### 📋 Sobre o Projeto
+
+DrawUFPB.io é uma aplicação que combina IA para geração de imagens com automação robótica para desenho. Através de uma interface amigável no Telegram, os usuários podem gerar imagens a partir de descrições textuais ou enviar suas próprias fotos, que serão processadas e desenhadas por um braço robótico.
+
 
 <p float="left">
-  <img src="steps/input.png" alt="Input" width="30%" />
-  <img src="steps/background_removed.png" alt="Background Removed" width="30%" />
-  <img src="steps/contour.png" alt="Contour" width="30%" />
+  <img src="example/1_input.png" alt="Input" width="30%" />
+  <img src="example/1_background_removed.png" alt="Background Removed" width="30%" />
+  <img src="example/1_contour.png" alt="Contour" width="30%" />
 </p>
 
 <p float="left">
-  <img src="steps/3d_path.png" alt="Input" width="40%" />
-  <img src="steps/sketch.png" alt="Top view sketch" width="40%" /> 
+  <img src="example/1_3d_path.png" alt="Input" width="30%" />
+  <img src="example/1_final_result.png" alt="Top view sketch" width="30%" /> 
+  <img src="example/1_draw.png" alt="Robotic Draw" width="30%" /> 
 </p>
 
-## Autores 👥
 
-- Lucas Dantas
-- Gustavo Henrique
-- Matheus Navarro
+<p float="left">
+  <img src="example/2_input.png" alt="Input" width="30%" />
+  <img src="example/2_background_removed.png" alt="Background Removed" width="30%" />
+  <img src="example/2_contour.png" alt="Contour" width="30%" />
+</p>
 
-## Funcionalidades 🔍
+<p float="left">
+  <img src="example/2_3d_path.png" alt="Input" width="30%" />
+  <img src="example/2_final_result.png" alt="Top view sketch" width="30%" /> 
+  <img src="example/2_draw.png" alt="Robotic Draw" width="30%" /> 
+</p>
 
-- 💬 Chatbot com IA para interagir com usuários
-- 🖼️ Geração de imagens a partir de descrições textuais usando IA
-- 📸 Processamento de fotos enviadas pelos usuários
-- 🤖 Execução de desenhos usando um braço robótico
-- 🔄 Interface via Telegram para fácil acesso e usabilidade
 
-## Arquitetura do Sistema 🏗️
 
-O projeto é composto por três módulos principais:
+### ✨ Características
 
-1. **chatbotAI.py**: Interface do usuário via Telegram, gerenciamento de comandos e integração com modelos de IA
-2. **image_processor.py**: Algoritmos de processamento de imagem para converter imagens em coordenadas de desenho
-3. **plcBridge.py**: Comunicação com o CLP (Controlador Lógico Programável) para controlar o braço robótico
+- 🤖 Chat baseado em IA usando o modelo LLaMA 3.1 (via Groq)
+- 🎨 Geração de imagens a partir de descrições textuais (usando FLUX.1-dev da HuggingFace)
+- 📷 Processamento de fotos enviadas pelo usuário
+- ✏️ Conversão automática de imagens em traços desenhável
+- 🦾 Integração com braço robótico para desenho físico
+- ⚙️ Personalização de parâmetros de desenho
 
-## Requisitos 📋
+### 🛠️ Tecnologias Utilizadas
 
-- Python 3.8+
-- Bibliotecas:
-  - python-telegram-bot
-  - groq
-  - rembg
-  - numpy
-  - opencv-cv2
-  - matplotlib
-  - PIL
-  - huggingface_hub
-  - requests
-  - python-dotenv
+- Python 3.x
+- Telegram Bot API
+- Groq API (LLaMA 3.1)
+- HuggingFace FLUX.1-dev
+- OpenCV
+- Socket Communication
+- PLC Bridge para controle do braço robótico
 
-## Configuração ⚙️
+### 🚀 Como Instalar
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/lucasddoliveira/DrawUFPB.io.git
-cd drawufpb.io
+git clone https://github.com/seu-usuario/DrawUFPB.io.git
+cd DrawUFPB.io
 ```
 
 2. Instale as dependências:
@@ -65,142 +68,115 @@ cd drawufpb.io
 pip install -r requirements.txt
 ```
 
-3. Crie e configure o arquivo `.env` com as seguintes variáveis:
+3. Configure as variáveis de ambiente criando um arquivo `.env` na raiz do projeto:
 ```
 TOKEN_TELEGRAM=seu_token_do_telegram
 GROQ_API_KEY=sua_chave_api_groq
 HUGGINGFACE_API_KEY=sua_chave_api_huggingface
-CLP_IP=endereco_ip_do_clp
+CLP_IP=ip_do_seu_clp
 ```
 
-## Como Usar 🚀
+### 🎮 Como Usar
 
-1. Inicie o bot do Telegram:
+1. Inicie o bot:
 ```bash
 python chatbotAI.py
 ```
 
-2. Interaja com o bot usando os seguintes comandos:
-   - `/start` - Inicia ou reinicia a conversa
+2. Abra o Telegram e procure pelo seu bot pelo nome de usuário (@seu_bot)
+
+3. Inicie uma conversa com o comando `/start`
+
+4. Comandos disponíveis:
+   - `/start` - Inicia/reinicia a conversa
    - `/image` - Gera uma imagem a partir de uma descrição
-   - `/upload` - Carrega sua própria foto para desenho
-   - `/help` - Mostra a mensagem de ajuda
+   - `/upload` - Envia sua própria foto para desenho
+   - `/params` - Visualiza e edita parâmetros de desenho
+   - `/help` - Exibe a mensagem de ajuda
    - `/clear` - Limpa o histórico de conversa
    - `/cancel` - Cancela a operação atual
 
-## Fluxo de Funcionamento 🔄
+### ⚙️ Parâmetros de Desenho
 
-1. O usuário interage com o bot via Telegram
-2. Para gerar imagens:
-   - O usuário envia o comando `/image` seguido de uma descrição
-   - A IA gera uma imagem usando o modelo FLUX.1-dev da Hugging Face
-   - A imagem é processada para detectar contornos
-   - O sistema converte os contornos em coordenadas para o braço robótico
-   - O usuário confirma se deseja desenhar a imagem fisicamente
+O bot permite a personalização de vários parâmetros que afetam como as imagens são processadas e desenhadas:
 
-3. Para processar fotos:
-   - O usuário envia o comando `/upload` e carrega uma foto
-   - O sistema processa a foto, remove o fundo e detecta contornos
-   - O sistema converte os contornos em coordenadas para o braço robótico
-   - O usuário confirma se deseja desenhar a imagem fisicamente
+- `process_cell_size`: Resolução do processamento de imagem (menor = mais detalhes)
+- `points_cell_width`: Largura de cada célula em pontos
+- `z_up`: Altura que a caneta se move entre traços
+- `remove_background`: Remove o fundo da imagem (1=sim, 0=não)
+- `bg_threshold`: Limiar para remoção de fundo
+- `bg_erode_pixels`: Força da erosão do fundo
+- `threshold1`: Limiar inferior para detecção de bordas
+- `threshold2`: Limiar superior para detecção de bordas
+- `blur_size`: Tamanho do desfoque para detecção de bordas
+- `distance_threshold`: Distância mínima entre pontos
+- `epsilon`: Fator de simplificação para linhas
+- `linewidth`: Largura das linhas desenhadas
 
-## Detalhes Técnicos 🔧
-
-### Processamento de Imagem
-
-O módulo `image_processor.py` realiza várias etapas para transformar uma imagem em coordenadas de desenho:
-
-1. Remoção de fundo usando IA (rembg)
-2. Detecção de contornos usando algoritmos de visão computacional (OpenCV)
-3. Conversão de contornos em uma matriz de pontos
-4. Geração de sequências de pontos otimizadas para o movimento do braço robótico
-5. Visualização 3D para preview do resultado
-
-### Comunicação com o CLP
-
-O módulo `plcBridge.py` gerencia a comunicação com o Controlador Lógico Programável através de socket TCP/IP:
-
-1. Estabelece conexão com o CLP usando o IP configurado
-2. Envia comandos para mover o braço robótico para posições específicas
-3. Recebe feedback sobre a posição atual do braço
-4. Gerencia a sequência de movimentos para executar o desenho
-
-## 📌 Observações
-
-- Os limites de desenho são definidos pelas bordas `[170, 65, -119]` e `[601, 403, -119]`.
-- O braço levanta entre sequências para evitar colisões.
-- O braço robótico utilizado neste projeto é da marca Comau.
-- O CLP (Controlador Lógico Programável) empregado é da Siemens.
-- Este repositório contém apenas o servidor remoto da aplicação. Para que o sistema funcione completamente, é necessário também hospedar os arquivos responsáveis pela leitura e escrita das posições no controlador do braço robótico.
-- Em caso de dúvidas, entre em contato pelo e-mail: lucasddoliveira1@gmail.com
-
-## Licença 📜
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
-# DrawUFPB.io 🎨 (en-US)
-
-## About the Project 📖
-
-DrawUFPB.io is an integrated system that combines artificial intelligence, image processing, and robotics to create physical drawings using a robotic arm. The project was developed at the **Federal University of Paraíba (UFPB)** for automation and robotics applications, as part of the Industrial Automation Systems course (2024.2).
-
-<p float="left">
-  <img src="steps/input.png" alt="Input" width="30%" />
-  <img src="steps/background_removed.png" alt="Background Removed" width="30%" />
-  <img src="steps/contour.png" alt="Contour" width="30%" />
-</p>
-
-<p float="left">
-  <img src="steps/3d_path.png" alt="Input" width="40%" />
-  <img src="steps/sketch.png" alt="Top view sketch" width="40%" /> 
-</p>
-
-
-## Authors 👥
+### 👥 Autores
 
 - Lucas Dantas
 - Gustavo Henrique
 - Matheus Navarro
 
-## Features 🔍
+---
 
-- 💬 AI chatbot for user interaction
-- 🖼️ AI image generation from text descriptions
-- 📸 Processing of user-uploaded photos
-- 🤖 Drawing execution using a robotic arm
-- 🔄 Telegram interface for easy access and usability
+## 🇬🇧 English
 
-## System Architecture 🏗️
+### 📋 About the Project
 
-The project consists of three main modules:
+DrawUFPB.io is an application that combines AI image generation with robotic automation for drawing. Through a friendly Telegram interface, users can generate images from text descriptions or upload their own photos, which will be processed and drawn by a robotic arm.
 
-1. **chatbotAI.py**: User interface via Telegram, command management, and AI model integration
-2. **image_processor.py**: Image processing algorithms to convert images into drawing coordinates
-3. **plcBridge.py**: Communication with the PLC (Programmable Logic Controller) to control the robotic arm
+<p float="left">
+  <img src="example/1_input.png" alt="Input" width="30%" />
+  <img src="example/1_background_removed.png" alt="Background Removed" width="30%" />
+  <img src="example/1_contour.png" alt="Contour" width="30%" />
+</p>
 
-## Requirements 📋
+<p float="left">
+  <img src="example/1_3d_path.png" alt="Input" width="30%" />
+  <img src="example/1_final_result.png" alt="Top view sketch" width="30%" /> 
+  <img src="example/1_draw.png" alt="Robotic Draw" width="30%" /> 
+</p>
 
-- Python 3.8+
-- Libraries:
-  - python-telegram-bot
-  - groq
-  - rembg
-  - numpy
-  - opencv-cv2
-  - matplotlib
-  - PIL
-  - huggingface_hub
-  - requests
-  - python-dotenv
 
-## Setup ⚙️
+<p float="left">
+  <img src="example/2_input.png" alt="Input" width="30%" />
+  <img src="example/2_background_removed.png" alt="Background Removed" width="30%" />
+  <img src="example/2_contour.png" alt="Contour" width="30%" />
+</p>
+
+<p float="left">
+  <img src="example/2_3d_path.png" alt="Input" width="30%" />
+  <img src="example/2_final_result.png" alt="Top view sketch" width="30%" /> 
+  <img src="example/2_draw.png" alt="Robotic Draw" width="30%" /> 
+</p>
+
+### ✨ Features
+
+- 🤖 AI-based chat using LLaMA 3.1 model (via Groq)
+- 🎨 Image generation from text descriptions (using HuggingFace's FLUX.1-dev)
+- 📷 Processing of user-uploaded photos
+- ✏️ Automatic conversion of images to drawable strokes
+- 🦾 Integration with robotic arm for physical drawing
+- ⚙️ Customization of drawing parameters
+
+### 🛠️ Technologies Used
+
+- Python 3.x
+- Telegram Bot API
+- Groq API (LLaMA 3.1)
+- HuggingFace FLUX.1-dev
+- OpenCV
+- Socket Communication
+- PLC Bridge for robotic arm control
+
+### 🚀 How to Install
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/lucasddoliveira/DrawUFPB.io.git
-cd drawufpb.io
+git clone https://github.com/your-username/DrawUFPB.io.git
+cd DrawUFPB.io
 ```
 
 2. Install dependencies:
@@ -208,76 +184,63 @@ cd drawufpb.io
 pip install -r requirements.txt
 ```
 
-3. Create and configure the `.env` file with the following variables:
+3. Configure environment variables by creating a `.env` file in the project root:
 ```
 TOKEN_TELEGRAM=your_telegram_token
 GROQ_API_KEY=your_groq_api_key
 HUGGINGFACE_API_KEY=your_huggingface_api_key
-CLP_IP=plc_ip_address
+CLP_IP=your_plc_ip
 ```
 
-## How to Use 🚀
+### 🎮 How to Use
 
-1. Start the Telegram bot:
+1. Start the bot:
 ```bash
 python chatbotAI.py
 ```
 
-2. Interact with the bot using the following commands:
-   - `/start` - Start or restart the conversation
+2. Open Telegram and search for your bot by username (@your_bot)
+
+3. Start a conversation with the `/start` command
+
+4. Available commands:
+   - `/start` - Start/restart the conversation
    - `/image` - Generate an image from a description
-   - `/upload` - Upload your own photo for drawing
-   - `/help` - Show the help message
-   - `/clear` - Clear the conversation history
-   - `/cancel` - Cancel the current operation
+   - `/upload` - Send your own photo for drawing
+   - `/params` - View and edit drawing parameters
+   - `/help` - Display help message
+   - `/clear` - Clear conversation history
+   - `/cancel` - Cancel current operation
 
-## Operation Flow 🔄
+### ⚙️ Drawing Parameters
 
-1. The user interacts with the bot via Telegram
-2. For image generation:
-   - The user sends the `/image` command followed by a description
-   - AI generates an image using Hugging Face's FLUX.1-dev model
-   - The image is processed to detect contours
-   - The system converts the contours into coordinates for the robotic arm
-   - The user confirms whether they want to physically draw the image
+The bot allows customization of various parameters that affect how images are processed and drawn:
 
-3. For photo processing:
-   - The user sends the `/upload` command and uploads a photo
-   - The system processes the photo, removes the background, and detects contours
-   - The system converts the contours into coordinates for the robotic arm
-   - The user confirms whether they want to physically draw the image
+- `process_cell_size`: Image processing resolution (lower = more detail)
+- `points_cell_width`: Width of each cell in points
+- `z_up`: Height the pen moves up between strokes
+- `remove_background`: Remove image background (1=yes, 0=no)
+- `bg_threshold`: Background removal threshold
+- `bg_erode_pixels`: Background erosion strength
+- `threshold1`: Edge detection lower threshold
+- `threshold2`: Edge detection upper threshold
+- `blur_size`: Blur size for edge detection
+- `distance_threshold`: Minimum distance between points
+- `epsilon`: Simplification factor for lines
+- `linewidth`: Width of drawn lines
 
-## Technical Details 🔧
+### 👥 Authors
 
-### Image Processing
+- Lucas Dantas
+- Gustavo Henrique
+- Matheus Navarro
 
-The `image_processor.py` module performs several steps to transform an image into drawing coordinates:
+---
 
-1. Background removal using AI (rembg)
-2. Contour detection using computer vision algorithms (OpenCV)
-3. Conversion of contours into a point matrix
-4. Generation of optimized point sequences for robotic arm movement
-5. 3D visualization for result preview
+## 📝 License
 
-### PLC Communication
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-The `plcBridge.py` module manages communication with the Programmable Logic Controller through TCP/IP socket:
+## 🤝 Contributing
 
-1. Establishes connection with the PLC using the configured IP
-2. Sends commands to move the robotic arm to specific positions
-3. Receives feedback on the current position of the arm
-4. Manages the sequence of movements to execute the drawing
-
-## 📌 Notes
-
-- Drawing area is defined between `[170, 65, -119]` and `[601, 403, -119]`.
-- The robotic arm lifts between strokes to avoid dragging.
-- The robotic arm used in this project is manufactured by Comau.
-- The PLC (Programmable Logic Controller) used is from Siemens.
-- This repository contains only the remote application server. For the system to function fully, it is also necessary to host the files responsible for reading and writing positions to the robotic arm controller.
-- If you have any questions, please contact: lucasddoliveira1@gmail.com
-
-
-## License 📜
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Contributions, issues, and feature requests are welcome!

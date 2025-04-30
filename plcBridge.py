@@ -48,12 +48,12 @@ class Conexao:
 def mover_braco(clp, POS_MOV, msg):
     clp.publicar(0, POS_MOV)
     POS_ATUAL = clp.LER_POS()
-    #print('Iniciando movimento.')
+    print('Iniciando movimento.')
 
     while POS_ATUAL[:-1] != POS_MOV[:-1] or abs(POS_ATUAL[-1]) != abs(POS_MOV[-1]):
         POS_ATUAL = clp.LER_POS()
-        #print(msg)
-        #print(f'Posição desejada: {POS_MOV} || Posição atual: {POS_ATUAL}')
+        print(msg)
+        print(f'Posição desejada: {POS_MOV} || Posição atual: {POS_ATUAL}')
     time.sleep(2)
 
 async def makeDraw(posicoes):
@@ -64,15 +64,11 @@ async def makeDraw(posicoes):
     clp = Conexao()
     clp.connect()
 
-    Ponto_inicial = [170, 65, -210, -3, 88, -2]
-
-    count = 0
+    Ponto_inicial = [170, 65, -100, -3, 88, -2]
 
     mover_braco(clp, Ponto_inicial, msg="Indo para o ponto inicial")
 
     for pos in posicoes:
         mover_braco(clp, pos, msg="Movendo para posição acima do ponto")
-        print(f'CONCLUÍDO -> {(count/len(posicoes)*100)}%')
-        count+=1
 
     mover_braco(clp, Ponto_inicial, msg="Indo para o ponto inicial")
