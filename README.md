@@ -9,6 +9,11 @@ Um bot de Telegram para criação e desenho de imagens utilizando um braço rob�
 DrawUFPB.io é uma aplicação que combina IA para geração de imagens com automação robótica para desenho. Através de uma interface amigável no Telegram, os usuários podem gerar imagens a partir de descrições textuais ou enviar suas próprias fotos, que serão processadas e desenhadas por um braço robótico.
 
 
+<video width="640" height="360" controls>
+  <source src="example/video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 <p float="left">
   <img src="example/1_input.png" alt="Input" width="30%" />
   <img src="example/1_background_removed.png" alt="Background Removed" width="30%" />
@@ -126,6 +131,11 @@ O bot permite a personalização de vários parâmetros que afetam como as image
 ### 📋 About the Project
 
 DrawUFPB.io is an application that combines AI image generation with robotic automation for drawing. Through a friendly Telegram interface, users can generate images from text descriptions or upload their own photos, which will be processed and drawn by a robotic arm.
+
+<video width="640" height="360" controls>
+  <source src="example/video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 <p float="left">
   <img src="example/1_input.png" alt="Input" width="30%" />
