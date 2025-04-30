@@ -1,6 +1,6 @@
 # DrawUFPB.io 🎨
 
-Um bot de Telegram para criação e desenho de imagens utilizando um braço robótico, baseado na biblioteca AmericoDraws.
+Um bot de Telegram para criação e desenho de imagens utilizando um braço robótico, baseado na biblioteca [https://github.com/lucasddoliveira/AmericoDraws](AmericoDraws).
 
 ## 🇧🇷 Português
 
